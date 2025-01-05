@@ -1,4 +1,4 @@
-import { WeatherTableProps } from '../../types/WeatherTypes';
+import { WeatherTableProps, WeatherEntryType } from '../../types/WeatherTypes';
 import React, { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,6 +12,12 @@ import TextField from '@mui/material/TextField';
 
 const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
     const [showInput, setShowInput] = useState(false);
+    const [newEntry, setNewEntry] = useState<WeatherEntryType>({
+        date: '',
+        minTemp: 0,
+        maxTemp: 0,
+        avgTemp: 0,
+    });
     const totalAvgTemp = entries.reduce((sum, entry) => sum + (entry.avgTemp || 0), 0) / entries.length || 0;
 
     const handleAddEntry = () => {
@@ -23,6 +29,15 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
             setShowInput(true);
         }
     }
+
+    const handleInputChange = <K extends keyof WeatherEntryType>
+        (field: K, value: WeatherEntryType[K]) => {
+        setNewEntry((prev) => {
+            const updatedEntry = { ...prev, [field]: value };
+            updatedEntry.avgTemp = (updatedEntry.minTemp + updatedEntry.maxTemp) / 2;
+            return updatedEntry;
+        });
+    };
 
     return (
         <TableContainer component={Paper}>
@@ -59,6 +74,8 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                                 label="Date"
                                 size="small"
                                 type="date"
+                                value={newEntry.date}
+                                onChange={(e) => handleInputChange('date', e.target.value)}
                             />
                         </TableCell>
                         <TableCell>
@@ -66,6 +83,8 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                                 label="Min Temp"
                                 type="number"
                                 size="small"
+                                value={newEntry.minTemp}
+                                onChange={(e) => handleInputChange('minTemp', Number(e.target.value))}
                             />
                         </TableCell>
                         <TableCell>
@@ -73,10 +92,12 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                                 label="Max Temp"
                                 type="number"
                                 size="small"
+                                value={newEntry.maxTemp}
+                                onChange={(e) => handleInputChange('maxTemp', Number(e.target.value))}
                             />
                         </TableCell>
                         <TableCell>
-                            calculated
+                            {newEntry.avgTemp}
                         </TableCell>
                         <TableCell>
                             <Button
@@ -97,11 +118,11 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                         </TableCell>
                         <TableCell>
                             <Button
-                                variant={showInput?"contained":"outlined"}
+                                variant={showInput ? "contained" : "outlined"}
                                 color="primary"
                                 onClick={handleAddEntry}
                             >
-                                {showInput?"√":"+"}
+                                {showInput ? "√" : "+"}
                             </Button>
                         </TableCell>
                     </TableRow>
