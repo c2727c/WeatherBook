@@ -24,7 +24,12 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, onEntriesChange })
     const totalAvgTemp = localEntries.reduce((sum, entry) => sum + (entry.avgTemp || 0), 0) / localEntries.length || 0;
 
     const handleEditEntries = () => {
-        setShowEdit((prev) => !prev);
+        setShowEdit((prev) => 
+            {
+                if (prev) setShowInput(false);
+                return !prev;
+            }
+        );
     }
 
     const handleAddEntry = () => {
@@ -135,6 +140,13 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, onEntriesChange })
                             >
                                 -
                             </Button>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleAddEntry}
+                            >
+                                √
+                            </Button>
                         </TableCell>
                     </TableRow>}
                     <TableRow>
@@ -146,12 +158,13 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, onEntriesChange })
                         </TableCell>
                         <TableCell>
                             {showEdit && <Button
-                                variant={showInput ? "contained" : "outlined"}
+                                disabled={showInput}
+                                variant={"outlined"}
                                 color="primary"
                                 size="small"
                                 onClick={handleAddEntry}
                             >
-                                {showInput ? "√" : "+"}
+                                +
                             </Button>}
                         </TableCell>
                     </TableRow>
