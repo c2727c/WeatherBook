@@ -1,22 +1,24 @@
-export interface WeatherEntry {
+import { TempUnit } from './TempUnit';
+
+export interface WeatherEntryType {
     date: string;
     minTemp: number;
     maxTemp: number;
     avgTemp: number;
 }
 
-export interface Project {
+export interface ProjectType {
     name: string;
     location: string;
-    unit: 'C' | 'F';
-    weatherEntries: WeatherEntry[];
+    unit: TempUnit;
+    weatherEntries: WeatherEntryType[];
     totalAvgTemp: number;
 }
 
 export interface ProjectProps {
-    project: Project;
+    project: ProjectType;
 }
 
 interface WeatherTableProps {
-    entries: WeatherEntry[];
+    entries: WeatherEntryType[];
 }
