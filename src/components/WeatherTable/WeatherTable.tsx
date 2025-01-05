@@ -21,7 +21,7 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) =
         avgTemp: 0,
     });
     const [localEntries, setLocalEntries] = useState<WeatherEntryType[]>(entries);
-    const totalAvgTemp = localEntries.reduce((sum, entry) => sum + (entry.avgTemp || 0), 0) / localEntries.length || 0;
+    const totalAvgTemp = localEntries.reduce((sum, entry) => sum + (Number(entry.avgTemp) || 0), 0) / localEntries.length || 0;
     useEffect(() => {
         setLocalEntries(entries);
     }, [entries]);
