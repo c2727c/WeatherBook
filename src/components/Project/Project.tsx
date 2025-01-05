@@ -18,6 +18,16 @@ const isEqualTable = (table1: WeatherEntryType[], table2: WeatherEntryType[]) =>
     return table1.length === table2.length && table1.every((entry, idx) => isEqualEntry(entry, table2[idx]));
 }
 
+const convertTemp = (temp: number, from: TempUnit, to: TempUnit) => {
+    console.log({ temp, from, to });
+    if (from === TempUnit.Celsius && to === TempUnit.Fahrenheit) {
+        return (temp * 1.8 + 32).toFixed(2);
+    }
+    if (from === TempUnit.Fahrenheit && to === TempUnit.Celsius) {
+        return ((temp - 32) / 1.8).toFixed(2);
+    }
+    return temp;
+};
 
 const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
     const [isEditing, setIsEditing] = useState({
@@ -35,9 +45,26 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
         setIsEditing((prev) => ({ ...prev, [field]: true }));
     };
     const handleBlur = (field: 'name' | 'location' | 'unit') => {
+        console.log("handleBlur, " + field);
         if (editableProject[field].toString().trim() !== '') {
             setIsEditing((prev) => ({ ...prev, [field]: false }));
-            setUpdatedProject((prev) => ({ ...prev, [field]: editableProject[field] }));
+            setUpdatedProject((prev) => {
+                const projectToUpdate = { ...prev, [field]: editableProject[field] };
+                if (field === 'unit') {
+                    // Update the weather entries to match the new unit
+                    const updatedEntries = prev.weatherEntries.map((entry) => {
+                        return {
+                            ...entry,
+                            minTemp: convertTemp(entry.minTemp, prev.unit, projectToUpdate.unit),
+                            maxTemp: convertTemp(entry.maxTemp, prev.unit, projectToUpdate.unit),
+                            avgTemp: convertTemp(entry.avgTemp, prev.unit, projectToUpdate.unit),
+                        } as WeatherEntryType;
+                    });
+                    projectToUpdate.weatherEntries = updatedEntries;
+                }
+                console.log(projectToUpdate);
+                return projectToUpdate;
+            });
         }
     };
     const handleChange = (field: 'name' | 'location' | 'unit', value: string) => {
@@ -77,6 +104,7 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
                         </Typography>
                     )}
                 </Grid>
+                {/* Location */}
                 <Grid size={6}>
                     {isEditing.location ? (
                         <TextField
@@ -136,7 +164,7 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
                 </Grid>
                 <Grid size={12}>
                     {isChanged && <Button variant="contained"
-                        color="primary" 
+                        color="primary"
                         onClick={() => {
                             updateProject(updatedProject);
                         }}>

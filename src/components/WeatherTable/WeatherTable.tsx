@@ -1,5 +1,5 @@
 import { WeatherTableProps, WeatherEntryType } from '../../types/WeatherTypes';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -22,6 +22,9 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) =
     });
     const [localEntries, setLocalEntries] = useState<WeatherEntryType[]>(entries);
     const totalAvgTemp = localEntries.reduce((sum, entry) => sum + (entry.avgTemp || 0), 0) / localEntries.length || 0;
+    useEffect(() => {
+        setLocalEntries(entries);
+    }, [entries]);
 
     const handleEditEntries = () => {
         setShowEdit((prev) => 
@@ -86,9 +89,9 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) =
                     {localEntries.map((entry, idx) => (
                         <TableRow key={idx}>
                             <TableCell>{entry.date}</TableCell>
-                            <TableCell>{entry.minTemp}</TableCell>
-                            <TableCell>{entry.maxTemp}</TableCell>
-                            <TableCell>{entry.avgTemp}</TableCell>
+                            <TableCell>{Number(entry.minTemp).toFixed(2)}</TableCell>
+                            <TableCell>{Number(entry.maxTemp).toFixed(2)}</TableCell>
+                            <TableCell>{Number(entry.avgTemp).toFixed(2)}</TableCell>
                             <TableCell>
                                 {showEdit && <Button
                                     variant="contained"
@@ -135,7 +138,7 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) =
                             />
                         </TableCell>
                         <TableCell>
-                            {newEntry.avgTemp}
+                            {newEntry.avgTemp.toFixed(2)}
                         </TableCell>
                         <TableCell>
                             <Button
