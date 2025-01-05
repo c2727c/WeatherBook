@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ProjectProps, WeatherEntryType } from '../../types/WeatherTypes';
-import { TextField, Typography, Box, Radio, RadioGroup, FormControl, InputLabel, FormLabel, FormControlLabel } from '@mui/material';
+import { TextField, Typography, Box, Radio, RadioGroup, FormControl, FormControlLabel, Button } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import WeatherTable from '../WeatherTable/WeatherTable';
 import { TempUnit } from '../../types/TempUnit';
 
-const Project: React.FC<ProjectProps> = ({ project }) => {
+const isEqualEntry = (entry1: WeatherEntryType, entry2: WeatherEntryType) => {
+    return (
+        entry1.date === entry2.date &&
+        entry1.minTemp === entry2.minTemp &&
+        entry1.maxTemp === entry2.maxTemp &&
+        entry1.avgTemp === entry2.avgTemp
+    );
+};
+
+const isEqualTable = (table1: WeatherEntryType[], table2: WeatherEntryType[]) => {
+    return table1.length === table2.length && table1.every((entry, idx) => isEqualEntry(entry, table2[idx]));
+}
+
+
+const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
     const [weatherEntries, setWeatherEntries] = useState<WeatherEntryType[]>(project.weatherEntries);
     const [isEditing, setIsEditing] = useState({
         name: false,
@@ -27,6 +41,14 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
         console.log({ ...editableProject, [field]: value });
         setEditableProject((prev) => ({ ...prev, [field]: value }));
     };
+    const isChanged = useMemo(() => {
+        return (
+            editableProject.name !== project.name ||
+            editableProject.location !== project.location ||
+            editableProject.unit !== project.unit ||
+            !isEqualTable(weatherEntries, project.weatherEntries)
+        );
+    }, [editableProject, weatherEntries, project]);
 
     return (
         <Box sx={{ p: 3, m: 15 }}>
@@ -75,20 +97,20 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                 <Grid size={6}>
                     {isEditing.unit ? (
                         <FormControl fullWidth>
-                        <FormControl>
-                            <RadioGroup
-                                defaultValue="female"
-                                value={editableProject.unit}
-                                onChange={(e) => handleChange('unit', e.target.value)}
-                                autoFocus
-                                onBlur={() => handleBlur('unit')}
-                                row
-                            >
-                                <FormControlLabel value={TempUnit.Celsius} control={<Radio />} label="Celsius" />
-                                <FormControlLabel value={TempUnit.Fahrenheit} control={<Radio />} label="Fahrenheit" />
-                            </RadioGroup>
+                            <FormControl>
+                                <RadioGroup
+                                    defaultValue="female"
+                                    value={editableProject.unit}
+                                    onChange={(e) => handleChange('unit', e.target.value)}
+                                    autoFocus
+                                    onBlur={() => handleBlur('unit')}
+                                    row
+                                >
+                                    <FormControlLabel value={TempUnit.Celsius} control={<Radio />} label="Celsius" />
+                                    <FormControlLabel value={TempUnit.Fahrenheit} control={<Radio />} label="Fahrenheit" />
+                                </RadioGroup>
+                            </FormControl>
                         </FormControl>
-                    </FormControl>
                     ) : (
                         <Typography
                             variant="h5"
@@ -96,7 +118,7 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                             sx={{ cursor: 'pointer' }}
                         > {editableProject.unit}
                         </Typography>
-                        )}
+                    )}
                 </Grid>
                 <Grid size={12}>
                     <WeatherTable entries={weatherEntries} updateEntries={
@@ -104,8 +126,21 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                             setWeatherEntries(newEntries);
                             console.log(newEntries);
                         }
-                        } 
-                        />
+                    }
+                    />
+                </Grid>
+                <Grid size={12}>
+                    {isChanged && <Button variant="contained"
+                        color="primary" 
+                        onClick={() => {
+                            updateProject({
+                                ...editableProject,
+                                weatherEntries,
+                                totalAvgTemp: 0
+                            });
+                        }}>
+                        Save Changes
+                    </Button>}
                 </Grid>
 
             </Grid>

@@ -110,7 +110,16 @@ const ProjectCarousel = () => {
       >
         {projects.map((project, idx) => (
           <SwiperSlide key={idx}>
-            <Project project={project} />
+            <Project project={project} updateProject={(newProject) => {
+              setProjects((prev) => 
+                {
+                  const newProjects = [...prev];
+                  newProjects[idx] = newProject;
+                  console.log(projects);
+                  return newProjects;
+                }
+              );
+            }} />
           </SwiperSlide>
         ))}
       </Swiper>

@@ -17,6 +17,7 @@ export interface ProjectType {
 
 export interface ProjectProps {
     project: ProjectType;
+    updateProject: (project: ProjectType) => void;
 }
 
 interface WeatherTableProps {
