@@ -80,6 +80,10 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
         );
     }, [updatedProject, project]);
 
+    const handleSave = () => {
+        updateProject(updatedProject);
+    };
+
     return (
         <Box sx={{ p: 3, m: 15 }}>
             <Grid container spacing={2}>
@@ -167,9 +171,8 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
                 <Grid size={12}>
                     {isChanged && <Button variant="contained"
                         color="primary"
-                        onClick={() => {
-                            updateProject(updatedProject);
-                        }}>
+                        onClick={handleSave}
+                    >
                         Save Changes
                     </Button>}
                 </Grid>
