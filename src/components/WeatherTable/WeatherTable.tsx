@@ -1,5 +1,5 @@
 import { WeatherTableProps } from '../../types/WeatherTypes';
-import * as React from 'react';
+import React, { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,9 +8,21 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
+    const [showInput, setShowInput] = useState(false);
     const totalAvgTemp = entries.reduce((sum, entry) => sum + (entry.avgTemp || 0), 0) / entries.length || 0;
+
+    const handleAddEntry = () => {
+        if (showInput) {
+            // add entry
+            setShowInput(false);
+        }
+        else {
+            setShowInput(true);
+        }
+    }
 
     return (
         <TableContainer component={Paper}>
@@ -41,6 +53,41 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                             </TableCell>
                         </TableRow>
                     ))}
+                    {showInput && <TableRow>
+                        <TableCell>
+                            <TextField
+                                label="Date"
+                                size="small"
+                                type="date"
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <TextField
+                                label="Min Temp"
+                                type="number"
+                                size="small"
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <TextField
+                                label="Max Temp"
+                                type="number"
+                                size="small"
+                            />
+                        </TableCell>
+                        <TableCell>
+                            calculated
+                        </TableCell>
+                        <TableCell>
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={() => setShowInput(false)}
+                            >
+                                -
+                            </Button>
+                        </TableCell>
+                    </TableRow>}
                     <TableRow>
                         <TableCell colSpan={3} style={{ fontWeight: 'bold', textAlign: 'right' }}>
                             Total Avg Temp
@@ -50,10 +97,11 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                         </TableCell>
                         <TableCell>
                             <Button
-                                variant="contained"
+                                variant={showInput?"contained":"outlined"}
                                 color="primary"
+                                onClick={handleAddEntry}
                             >
-                                +
+                                {showInput?"√":"+"}
                             </Button>
                         </TableCell>
                     </TableRow>
