@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
-const WeatherTable: React.FC<WeatherTableProps> = ({ entries, onEntriesChange }) => {
+const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) => {
     const [showEdit, setShowEdit] = useState(false);
     const [showInput, setShowInput] = useState(false);
     const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -26,7 +26,11 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, onEntriesChange })
     const handleEditEntries = () => {
         setShowEdit((prev) => 
             {
-                if (prev) setShowInput(false);
+                if (prev)
+                    {
+                        setShowInput(false);
+                        updateEntries(localEntries);
+                    }
                 return !prev;
             }
         );
@@ -78,6 +82,7 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, onEntriesChange })
                     </TableRow>
                 </TableHead>
                 <TableBody>
+                    {/* Weather Entries */}
                     {localEntries.map((entry, idx) => (
                         <TableRow key={idx}>
                             <TableCell>{entry.date}</TableCell>

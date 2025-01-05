@@ -24,10 +24,9 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
         setIsEditing((prev) => ({ ...prev, [field]: false }));
     };
     const handleChange = (field: 'name' | 'location' | 'unit', value: string) => {
-        console.log(editableProject);
+        console.log({ ...editableProject, [field]: value });
         setEditableProject((prev) => ({ ...prev, [field]: value }));
     };
-
 
     return (
         <Box sx={{ p: 3, m: 15 }}>
@@ -100,7 +99,13 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                         )}
                 </Grid>
                 <Grid size={12}>
-                    <WeatherTable entries={weatherEntries} onEntriesChange={(newEntries) => setWeatherEntries(newEntries)} />
+                    <WeatherTable entries={weatherEntries} updateEntries={
+                        (newEntries) => {
+                            setWeatherEntries(newEntries);
+                            console.log(newEntries);
+                        }
+                        } 
+                        />
                 </Grid>
 
             </Grid>
