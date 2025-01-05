@@ -81,6 +81,10 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
     }, [updatedProject, project]);
 
     const handleSave = () => {
+        if (updatedProject.name.trim() === 'New Project' || updatedProject.location.trim() === 'Add Location') {
+            alert('Please enter a valid name and location');
+            return;
+        }
         updateProject(updatedProject);
     };
 
