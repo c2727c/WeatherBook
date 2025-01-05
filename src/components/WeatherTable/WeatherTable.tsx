@@ -9,37 +9,58 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 
-const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => (
-    <TableContainer component={Paper}>
-        <Table>
-            <TableHead>
-                <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Min Temp</TableCell>
-                    <TableCell>Max Temp</TableCell>
-                    <TableCell>Avg Temp</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {entries.map((entry, idx) => (
-                    <TableRow key={idx}>
-                        <TableCell>{entry.date}</TableCell>
-                        <TableCell>{entry.minTemp}</TableCell>
-                        <TableCell>{entry.maxTemp}</TableCell>
-                        <TableCell>{entry.avgTemp}</TableCell>
+const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
+    const totalAvgTemp = entries.reduce((sum, entry) => sum + (entry.avgTemp || 0), 0) / entries.length || 0;
+
+    return (
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Min Temp</TableCell>
+                        <TableCell>Max Temp</TableCell>
+                        <TableCell>Avg Temp</TableCell>
+                        <TableCell style={{ width: '10%', whiteSpace: 'nowrap', textAlign: 'center' }}></TableCell>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-        <Button
-                variant="contained"
-                color="primary"
-                // onClick={handleAddRow}
-                style={{ marginTop: '10px' }}
-            >
-                Add Row
-        </Button>
-    </TableContainer>
-);
+                </TableHead>
+                <TableBody>
+                    {entries.map((entry, idx) => (
+                        <TableRow key={idx}>
+                            <TableCell>{entry.date}</TableCell>
+                            <TableCell>{entry.minTemp}</TableCell>
+                            <TableCell>{entry.maxTemp}</TableCell>
+                            <TableCell>{entry.avgTemp}</TableCell>
+                            <TableCell>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    -
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                    <TableRow>
+                        <TableCell colSpan={3} style={{ fontWeight: 'bold', textAlign: 'right' }}>
+                            Total Avg Temp
+                        </TableCell>
+                        <TableCell style={{ fontWeight: 'bold' }}>
+                            {totalAvgTemp.toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                            >
+                                +
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+        </TableContainer>
+    )
+}
 
 export default WeatherTable;
