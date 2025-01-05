@@ -22,5 +22,6 @@ export interface ProjectProps {
 
 interface WeatherTableProps {
     entries: WeatherEntryType[];
+    unit: TempUnit;
     updateEntries : (entries: WeatherEntryType[]) => void;
 }

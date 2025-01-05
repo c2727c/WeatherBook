@@ -154,12 +154,14 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
                     )}
                 </Grid>
                 <Grid size={12}>
-                    <WeatherTable entries={updatedProject.weatherEntries} updateEntries={
-                        (newEntries) => {
-                            setUpdatedProject((prev) => ({ ...prev, weatherEntries: newEntries }));
-                            console.log(newEntries);
+                    <WeatherTable entries={updatedProject.weatherEntries}
+                        unit={updatedProject.unit}
+                        updateEntries={
+                            (newEntries) => {
+                                setUpdatedProject((prev) => ({ ...prev, weatherEntries: newEntries }));
+                                console.log(newEntries);
+                            }
                         }
-                    }
                     />
                 </Grid>
                 <Grid size={12}>

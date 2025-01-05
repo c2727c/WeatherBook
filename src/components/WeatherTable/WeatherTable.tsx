@@ -1,5 +1,5 @@
 import { WeatherTableProps, WeatherEntryType } from '../../types/WeatherTypes';
-import React, { useState, useEffect, useMemo} from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,8 +9,19 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { TempUnit } from '../../types/TempUnit';
 
-const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) => {
+const calculateColor = (temp: number, unit: TempUnit) => {
+    if (temp < 3 && unit === TempUnit.Celsius || temp < 37.4 && unit === TempUnit.Fahrenheit) {
+        return 'blue';
+    }
+    if (temp < 30 && unit === TempUnit.Celsius || temp < 86 && unit === TempUnit.Fahrenheit) {
+        return 'black';
+    }
+    return 'red';
+};
+
+const WeatherTable: React.FC<WeatherTableProps> = ({ entries, unit, updateEntries }) => {
     const [showEdit, setShowEdit] = useState(false);
     const [showInput, setShowInput] = useState(false);
     const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -27,15 +38,13 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) =
     }, [entries]);
 
     const handleEditEntries = () => {
-        setShowEdit((prev) => 
-            {
-                if (prev)
-                    {
-                        setShowInput(false);
-                        updateEntries(localEntries);
-                    }
-                return !prev;
+        setShowEdit((prev) => {
+            if (prev) {
+                setShowInput(false);
+                updateEntries(localEntries);
             }
+            return !prev;
+        }
         );
     }
 
@@ -89,9 +98,15 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) =
                     {localEntries.map((entry, idx) => (
                         <TableRow key={idx}>
                             <TableCell>{entry.date}</TableCell>
-                            <TableCell>{Number(entry.minTemp).toFixed(2)}</TableCell>
-                            <TableCell>{Number(entry.maxTemp).toFixed(2)}</TableCell>
-                            <TableCell>{Number(entry.avgTemp).toFixed(2)}</TableCell>
+                            <TableCell sx={{
+                                color: calculateColor(entry.minTemp, unit)
+                            }}>{Number(entry.minTemp).toFixed(2)}</TableCell>
+                            <TableCell sx={{
+                                color: calculateColor(entry.maxTemp, unit)
+                            }}>{Number(entry.maxTemp).toFixed(2)}</TableCell>
+                            <TableCell sx={{
+                                color: calculateColor(entry.avgTemp, unit)
+                            }}>{Number(entry.avgTemp).toFixed(2)}</TableCell>
                             <TableCell>
                                 {showEdit && <Button
                                     variant="contained"
@@ -161,7 +176,7 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries, updateEntries }) =
                         <TableCell colSpan={3} style={{ fontWeight: 'bold', textAlign: 'right' }}>
                             Total Avg Temp
                         </TableCell>
-                        <TableCell style={{ fontWeight: 'bold' }}>
+                        <TableCell sx={{fontWeight: 'bold', color: calculateColor(totalAvgTemp, unit)}}>
                             {totalAvgTemp.toFixed(2)}
                         </TableCell>
                         <TableCell>
