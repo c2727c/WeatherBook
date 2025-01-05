@@ -91,7 +91,7 @@ const projectsData : ProjectType[] = [
   }
 ]
 
-const PeojectCarousel = () => {
+const ProjectCarousel = () => {
   const [projects, setProjects] = useState<ProjectType[]>([]);
   useEffect(() => {
     setProjects(projectsData);
@@ -118,4 +118,4 @@ const PeojectCarousel = () => {
   )
 }
 
-export default PeojectCarousel
+export default ProjectCarousel
