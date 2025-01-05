@@ -115,7 +115,7 @@ const ProjectCarousel = () => {
                 {
                   const newProjects = [...prev];
                   newProjects[idx] = newProject;
-                  console.log(projects);
+                  console.log("Updated Projects: ", newProjects);
                   return newProjects;
                 }
               );

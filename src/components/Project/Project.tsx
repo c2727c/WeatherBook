@@ -20,7 +20,6 @@ const isEqualTable = (table1: WeatherEntryType[], table2: WeatherEntryType[]) =>
 
 
 const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
-    const [weatherEntries, setWeatherEntries] = useState<WeatherEntryType[]>(project.weatherEntries);
     const [isEditing, setIsEditing] = useState({
         name: false,
         location: false,
@@ -31,11 +30,15 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
         location: project.location,
         unit: project.unit,
     });
+    const [updatedProject, setUpdatedProject] = useState(project);
     const handleDoubleClick = (field: 'name' | 'location' | 'unit') => {
         setIsEditing((prev) => ({ ...prev, [field]: true }));
     };
     const handleBlur = (field: 'name' | 'location' | 'unit') => {
-        setIsEditing((prev) => ({ ...prev, [field]: false }));
+        if (editableProject[field].toString().trim() !== '') {
+            setIsEditing((prev) => ({ ...prev, [field]: false }));
+            setUpdatedProject((prev) => ({ ...prev, [field]: editableProject[field] }));
+        }
     };
     const handleChange = (field: 'name' | 'location' | 'unit', value: string) => {
         console.log({ ...editableProject, [field]: value });
@@ -43,12 +46,12 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
     };
     const isChanged = useMemo(() => {
         return (
-            editableProject.name !== project.name ||
-            editableProject.location !== project.location ||
-            editableProject.unit !== project.unit ||
-            !isEqualTable(weatherEntries, project.weatherEntries)
+            updatedProject.name !== project.name ||
+            updatedProject.location !== project.location ||
+            updatedProject.unit !== project.unit ||
+            !isEqualTable(updatedProject.weatherEntries, project.weatherEntries)
         );
-    }, [editableProject, weatherEntries, project]);
+    }, [updatedProject, project]);
 
     return (
         <Box sx={{ p: 3, m: 15 }}>
@@ -61,6 +64,7 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
                             value={editableProject.name}
                             onChange={(e) => handleChange('name', e.target.value)}
                             onBlur={() => handleBlur('name')}
+                            error={editableProject.name.trim() === ''}
                             autoFocus
                         />
                     ) : (
@@ -79,6 +83,7 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
                             value={editableProject.location}
                             onChange={(e) => handleChange('location', e.target.value)}
                             onBlur={() => handleBlur('location')}
+                            error={editableProject.location.trim() === ''}
                             autoFocus
                             variant="standard"
                             fullWidth
@@ -121,9 +126,9 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
                     )}
                 </Grid>
                 <Grid size={12}>
-                    <WeatherTable entries={weatherEntries} updateEntries={
+                    <WeatherTable entries={updatedProject.weatherEntries} updateEntries={
                         (newEntries) => {
-                            setWeatherEntries(newEntries);
+                            setUpdatedProject((prev) => ({ ...prev, weatherEntries: newEntries }));
                             console.log(newEntries);
                         }
                     }
@@ -133,11 +138,7 @@ const Project: React.FC<ProjectProps> = ({ project, updateProject }) => {
                     {isChanged && <Button variant="contained"
                         color="primary" 
                         onClick={() => {
-                            updateProject({
-                                ...editableProject,
-                                weatherEntries,
-                                totalAvgTemp: 0
-                            });
+                            updateProject(updatedProject);
                         }}>
                         Save Changes
                     </Button>}
