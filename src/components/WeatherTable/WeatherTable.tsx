@@ -10,7 +10,8 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
-const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
+const WeatherTable: React.FC<WeatherTableProps> = ({ entries, onEntriesChange }) => {
+    const [showEdit, setShowEdit] = useState(false);
     const [showInput, setShowInput] = useState(false);
     const [submitAttempted, setSubmitAttempted] = useState(false);
     const [newEntry, setNewEntry] = useState<WeatherEntryType>({
@@ -19,7 +20,12 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
         maxTemp: 0,
         avgTemp: 0,
     });
-    const totalAvgTemp = entries.reduce((sum, entry) => sum + (entry.avgTemp || 0), 0) / entries.length || 0;
+    const [localEntries, setLocalEntries] = useState<WeatherEntryType[]>(entries);
+    const totalAvgTemp = localEntries.reduce((sum, entry) => sum + (entry.avgTemp || 0), 0) / localEntries.length || 0;
+
+    const handleEditEntries = () => {
+        setShowEdit((prev) => !prev);
+    }
 
     const handleAddEntry = () => {
         if (showInput) {
@@ -27,7 +33,7 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
             if (newEntry.date === '' || newEntry.minTemp > newEntry.maxTemp) {
                 return;
             }
-            entries.push(newEntry);
+            localEntries.push(newEntry);
             setShowInput(false);
         }
         else {
@@ -54,23 +60,36 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                         <TableCell>Min Temp</TableCell>
                         <TableCell>Max Temp</TableCell>
                         <TableCell>Avg Temp</TableCell>
-                        <TableCell style={{ width: '10%', whiteSpace: 'nowrap', textAlign: 'center' }}></TableCell>
+                        <TableCell style={{ width: '10%', whiteSpace: 'nowrap' }}>
+                            <Button
+                                variant={showEdit ? "contained" : "outlined"}
+                                color="primary"
+                                onClick={handleEditEntries}
+                                size="small"
+                            >
+                                {showEdit ? "√" : "✏️"}
+                            </Button>
+                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {entries.map((entry, idx) => (
+                    {localEntries.map((entry, idx) => (
                         <TableRow key={idx}>
                             <TableCell>{entry.date}</TableCell>
                             <TableCell>{entry.minTemp}</TableCell>
                             <TableCell>{entry.maxTemp}</TableCell>
                             <TableCell>{entry.avgTemp}</TableCell>
                             <TableCell>
-                                <Button
+                                {showEdit && <Button
                                     variant="contained"
-                                    color="primary"
+                                    color="error"
+                                    size="small"
+                                    onClick={() => {
+                                        setLocalEntries((prev) => prev.filter((_, i) => i !== idx));
+                                    }}
                                 >
-                                    -
-                                </Button>
+                                    🗑️
+                                </Button>}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -126,13 +145,14 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                             {totalAvgTemp.toFixed(2)}
                         </TableCell>
                         <TableCell>
-                            <Button
+                            {showEdit && <Button
                                 variant={showInput ? "contained" : "outlined"}
                                 color="primary"
+                                size="small"
                                 onClick={handleAddEntry}
                             >
                                 {showInput ? "√" : "+"}
-                            </Button>
+                            </Button>}
                         </TableCell>
                     </TableRow>
                 </TableBody>

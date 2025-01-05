@@ -21,4 +21,5 @@ export interface ProjectProps {
 
 interface WeatherTableProps {
     entries: WeatherEntryType[];
+    onEntriesChange : (entries: WeatherEntryType[]) => void;
 }
