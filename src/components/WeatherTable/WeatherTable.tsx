@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 
 const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
     const [showInput, setShowInput] = useState(false);
+    const [submitAttempted, setSubmitAttempted] = useState(false);
     const [newEntry, setNewEntry] = useState<WeatherEntryType>({
         date: '',
         minTemp: 0,
@@ -22,11 +23,16 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
 
     const handleAddEntry = () => {
         if (showInput) {
-            // add entry
+            setSubmitAttempted(true);
+            if (newEntry.date === '' || newEntry.minTemp > newEntry.maxTemp) {
+                return;
+            }
+            entries.push(newEntry);
             setShowInput(false);
         }
         else {
             setShowInput(true);
+            setSubmitAttempted(false);
         }
     }
 
@@ -74,6 +80,7 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                                 label="Date"
                                 size="small"
                                 type="date"
+                                error={submitAttempted && newEntry.date === ''}
                                 value={newEntry.date}
                                 onChange={(e) => handleInputChange('date', e.target.value)}
                             />
@@ -83,6 +90,7 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                                 label="Min Temp"
                                 type="number"
                                 size="small"
+                                error={submitAttempted && newEntry.minTemp > newEntry.maxTemp}
                                 value={newEntry.minTemp}
                                 onChange={(e) => handleInputChange('minTemp', Number(e.target.value))}
                             />
@@ -92,6 +100,7 @@ const WeatherTable: React.FC<WeatherTableProps> = ({ entries }) => {
                                 label="Max Temp"
                                 type="number"
                                 size="small"
+                                error={submitAttempted && newEntry.minTemp > newEntry.maxTemp}
                                 value={newEntry.maxTemp}
                                 onChange={(e) => handleInputChange('maxTemp', Number(e.target.value))}
                             />
