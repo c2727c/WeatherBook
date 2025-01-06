@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Button, Box, Typography } from '@mui/material';
 
-// import './ProjectList.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
-// import 'swiper/css';
-// import 'swiper/css/navigation';
-// import 'swiper/css/pagination';
-// import required modules
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 import Project from '../Project/Project';
 import { ProjectType } from '../../types/WeatherTypes';
