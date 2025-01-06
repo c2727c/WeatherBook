@@ -1,5 +1,5 @@
 import { WeatherTableProps, WeatherEntryType } from '../../types/WeatherTypes';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
