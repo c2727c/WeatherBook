@@ -120,11 +120,9 @@ const ProjectCarousel = () => {
         mousewheel={true}
         keyboard={true}
         modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-        className="mySwiper"
       >
-        <SwiperSlide>
-          {addingProject ? (
-            <Project project={{
+        {addingProject && <SwiperSlide>
+          <Project project={{
               name: 'New Project',
               location: 'Add Location',
               unit: TempUnit.Celsius,
@@ -137,8 +135,9 @@ const ProjectCarousel = () => {
                 return newProjects;
               });
               setAddingProject(false);
-            }} />	
-          ) : (
+            }} />
+        </SwiperSlide>}
+        {!addingProject && <SwiperSlide>
           <Box sx={{ p: 20, m: 15 }}>
             <Typography variant="h4" gutterBottom>
               <Button variant="contained" color="primary" onClick={handleAddProject}>
@@ -146,8 +145,7 @@ const ProjectCarousel = () => {
               </Button>
             </Typography>
           </Box>
-        )}
-        </SwiperSlide>
+          </SwiperSlide>}
         {projects.map((project, idx) => (
           <SwiperSlide key={idx}>
             <Project project={project} updateProject={(newProject) => {
